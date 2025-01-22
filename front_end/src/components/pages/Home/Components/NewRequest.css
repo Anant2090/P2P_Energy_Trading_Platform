@@ -1,0 +1,41 @@
+.new-request-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.request-info p {
+  display: flex;
+  margin: 0 0;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.request-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.accept-button,
+.reject-button {
+  padding: 7px;
+  border-radius: 15px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  width: 75px;
+}
+
+.accept-button {
+  background-color: #4caf50;
+}
+
+.reject-button {
+  background-color: #f44336;
+}
