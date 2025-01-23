@@ -22,11 +22,11 @@
 }
 
 .active-buy {
-  background-color: #4caf50;
+  background-color: #00B400;
 }
 
 .active-sell {
-  background-color: #f44336;
+  background-color: #FF0000;
 }
 
 .transaction-form {
@@ -56,11 +56,11 @@
 }
 
 .buy-button {
-  background-color: #4caf50;
+  background-color: #00B400;
 }
 
 .sell-button {
-  background-color: #f44336;
+  background-color: #FF0000;
 }
 /* General Container Styling
 .buy-sell-container {
@@ -113,12 +113,12 @@
 }
 
 .toggle-button.active-buy {
-  background-color: #4caf50;
+  background-color: #00B400;
   color: white;
 }
 
 .toggle-button.active-sell {
-  background-color: #f44336;
+  background-color: #FF0000;
   color: white;
 }
 
@@ -161,12 +161,12 @@
 }
 
 .buy-button {
-  background-color: #4caf50;
+  background-color: #00B400;
   color: white;
 }
 
 .sell-button {
-  background-color: #f44336;
+  background-color: #FF0000;
   color: white;
 }
 
@@ -213,12 +213,12 @@
 }
 
 .data-table .buy {
-  background-color: #4caf50;
+  background-color: #00B400;
   color: white;
 }
 
 .data-table .sell {
-  background-color: #f44336;
+  background-color: #FF0000;
   color: white;
 }
 
@@ -254,7 +254,7 @@
 .close-modal-button {
   margin-top: 10px;
   padding: 8px 16px;
-  background-color: #4caf50;
+  background-color: #00B400;
   color: white;
   border: none;
   border-radius: 4px;

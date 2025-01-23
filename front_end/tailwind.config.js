@@ -6,7 +6,7 @@ module.exports = {
         poppins: ['Poppins', 'sans-serif'], // Adding Poppins font to Tailwind
       },
       backgroundImage: {
-        'custom-bg': "url('/public/images/tt.png')", // Correct path to public folder
+        'custom-bg': "url('/public/images/image.png')", // Correct path to public folder
       },
     },
   },

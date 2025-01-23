@@ -53,7 +53,7 @@ const BuySell = () => {
     <div className={`buy-sell-container ${transactionType} bg-[#faf9fa73] `}>
       {/* BuySell Section */}
       <div className="buy-sell-section">
-        <h2 className="title">{transactionType === "buy" ? "Buy Energy" : "Sell Energy"}</h2>
+        <h2 className="title ">{transactionType === "buy" ? "Buy Energy" : "Sell Energy"}</h2>
 
         <div className="transaction-toggle">
           <button
