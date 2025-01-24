@@ -4,8 +4,8 @@ import { CgProfile } from "react-icons/cg";
 
 const Navbar = () => {
   return (
-    <nav>
-      <div className="flex items-center justify-between pl-2 pr-2 bg-[#faf9fac2] h-[10vh] shadow-md">
+    <nav className="animate-fadeIn animate-slideIn">
+      <div className="flex items-center justify-between pl-2 pr-2 bg-[#a7a4a481] h-[10vh] shadow-md  animate-slideIn">
         <div className="Logo flex items-center">
           <img
             className="h-[12vh] w-[6vw] transition-transform duration-300 hover:scale-110"

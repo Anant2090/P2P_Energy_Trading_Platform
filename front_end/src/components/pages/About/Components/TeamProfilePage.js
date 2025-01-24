@@ -2,7 +2,7 @@ import React from "react";
 
 const TeamProfileCard = ({ name, role, img, linkdin, About }) => {
   return (
-    <div className="bg-teal-50 p-6 rounded-lg shadow-lg w-[60%] mx-auto">
+    <div className="bg-teal-50 p-6 rounded-lg shadow-lg w-[60%] mx-auto ">
       <div className="flex items-center gap-6">
         {/* Dynamic Image */}
         <img

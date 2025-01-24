@@ -3,7 +3,7 @@ import "./ContactUs.css"; // Import custom CSS for styling
 
 const ContactUs = () => {
   return (
-    <div className="contact-container">
+    <div className="contact-container animate-fadeIn animate-slideIn">
       {/* Contact Form Section */}
       <div className="form-section">
         <h2>Contact Us</h2>

@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <>
       <footer
-        className="bg-cover bg-center text-white py-8 h-[200px]"
+        className="bg-cover bg-center text-white py-8 h-[200px] mt-5 animate-fadeIn animate-slideIn "
         style={{
           backgroundImage: "url('/images/foot.png')", // Corrected path to the image
         }}

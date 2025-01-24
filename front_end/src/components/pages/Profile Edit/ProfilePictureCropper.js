@@ -61,7 +61,7 @@ const ProfilePictureCropper = () => {
   };
 
   return (
-    <div className="mt-2">
+    <div className="mt-2 animate-fadeIn animate-slideIn">
       {isImageUploaded && !isImageCropped && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 animate-fadeIn">
           <div className="bg-white p-8 rounded-lg shadow-lg w-4/5 max-w-lg animate-slideIn flex flex-col items-center">

@@ -39,7 +39,7 @@ const About = () => {
 
   return (
     <>
-      <div className="w-[85%] bg-[#faf9faa0] ml-[7.5vw] mr-[7.5vw] mt-5 p-5 overflow-auto">
+      <div className="w-[85%] bg-[#faf9faa0] ml-[7.5vw] mr-[7.5vw] mt-5 p-5 overflow-auto animate-fadeIn animate-slideIn">
         <div className="text-center text-[#0F4C6E] text-5xl font-bold">
           Company Overview
         </div>

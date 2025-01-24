@@ -29,7 +29,7 @@ const Home = () => {
   const Battery_Percentage_data = "75";
 
   return (
-    <div className="home-container ">
+    <div className="home-container inset-0 z-50 animate-fadeIn animate-slideIn">
       <div className="battery-container rounded-lg ">
         <div className="battery-percentage">
           <BatteryPercentage Battety_percentage={Battery_Percentage_data} />
