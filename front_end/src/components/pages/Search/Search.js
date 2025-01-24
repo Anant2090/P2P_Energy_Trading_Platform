@@ -17,7 +17,7 @@ const Search = () => {
 
   return (
     <div>
-    <div className="search-container">
+    <div className="search-container animate-fadeIn animate-slideIn">
 
       {/* Search Section */}
       <div className="search-section">

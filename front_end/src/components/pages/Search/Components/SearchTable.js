@@ -2,7 +2,7 @@ import React from "react";
 
 const SearchTable = ({ title, data, onActionClick }) => {
   return (
-    <div className="mt-5 max-w-[90%] mx-auto bg-[#faf9fac2] p-5 rounded-lg shadow-md">
+    <div className="mt-5 max-w-[90%] mx-auto bg-[#faf9fac2] p-5 rounded-lg shadow-md animate-fadeIn animate-slideIn">
       <h2 className="text-lg font-semibold mb-4 text-center">{title}</h2>
       <table className="w-full border-collapse">
         <thead>

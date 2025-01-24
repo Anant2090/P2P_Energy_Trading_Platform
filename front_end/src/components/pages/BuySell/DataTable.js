@@ -3,7 +3,7 @@ import "./DataTable.css";
 
 const DataTable = ({ title, data, actionLabel, onActionClick }) => {
   return (
-    <div className="data-table-container">
+    <div className="data-table-container animate-fadeIn animate-slideIn ">
       <h2 className="text-2xl ">{title}</h2>
       <table className="data-table">
         <thead>
