@@ -1,8 +1,45 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./components/pages/Home/Home";
+import About from "./components/pages/About/About";
+import Contact from "./components/pages/Contact/Contact";
+import NoPage from "./components/pages/Nopage/NoPage";
+import ProfilePictureCropper from "./components/pages/Profile Edit/ProfilePictureCropper";
+import BuySell from "./components/pages/BuySell/Buysell";
+import Search from "./components/pages/Search/Search";
+import Tutorial from "./components/pages/Tutorial/Tutorial";
+import Login from "./components/pages/Login/Login";
+import Register from "./components/pages/Login/Register";
+import ProtectedRoute from "./components/ProtectedRoute"; // Import protected route
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
+function App() {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+
+                {/* Protect all routes inside Layout */}
+                <Route 
+                    path="/" 
+                    element={
+                        <ProtectedRoute>
+                            <Layout />
+                        </ProtectedRoute>
+                    }
+                >
+                    <Route index element={<Home />} />
+                    <Route path="/Trade" element={<BuySell />} />
+                    <Route path="/About" element={<About />} />
+                    <Route path="/Search" element={<Search />} />
+                    <Route path="/Tutorial" element={<Tutorial />} />
+                    <Route path="/Contact" element={<Contact />} />
+                    <Route path="/Profile" element={<ProfilePictureCropper />} />
+                    <Route path="*" element={<NoPage />} />
+                </Route>
+            </Routes>
+        </Router>
+    );
+}
+
+export default App;
