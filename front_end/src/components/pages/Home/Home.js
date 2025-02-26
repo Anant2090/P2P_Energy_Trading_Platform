@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BatteryUsageChart from "./Components/BatteryUsage";
 import NewRequest from "./Components/NewRequest";
 import BatteryPercentage from "./Components/BatteryPercentage";
 import "./Home.css";
 import DataTable from "./Components/HistoryTable";
+import { useNavigate } from "react-router-dom";
+
 
 const Home = () => {
-  // Data for History Table
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    
+    const flag = localStorage.getItem("isNewUser") === "true"; 
+    if (flag) {
+      alert("Fill all the data first!");
+      navigate("/Profile", { replace: true });
+    }
+  }, []); 
+  
   const History = [
     { id: 1, name: "Anant", trade: "Sell" },
     { id: 2, name: "Imran", trade: "Buy" },

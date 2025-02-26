@@ -7,5 +7,6 @@ export const updateProfile = async (profileData) => {
 };
 
 export const getProfile = async (email) => {
-    return await axios.get(`${API_URL}/getprofile`,  email );
+    return await axios.get(`${API_URL}/getprofile?email=${email}`);
 };
+

@@ -8,6 +8,7 @@ router.post("/profileupdate", async (req, res) => {
     const { firstName, lastName, email, phoneNumber, country, city, address, zipCode } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: "User not found" });
+
     user.firstName = firstName;
     user.lastName = lastName;
     user.phoneNumber = phoneNumber;
@@ -25,15 +26,15 @@ router.post("/profileupdate", async (req, res) => {
 
 router.get("/getprofile", async (req, res) => {
   try {
-    console.log(req.body)
-    const email = req.body;
-    console.log(email);
-    console.log("Hi");
+    const { email } = req.query; 
+    console.log(email) // Extract email from query parameters
     const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ msg: "User not found" });
     res.json(user);
   } catch (error) {
     res.status(500).json({ msg: "Server error" });
   }
 });
+
 
 module.exports = router;

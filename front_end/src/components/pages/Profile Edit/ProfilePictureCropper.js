@@ -11,11 +11,29 @@ import { getProfile } from "../services/profileService";
 
 const ProfilePictureCropper = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(null);
-
+  const [formData, setFormData] = useState();
+  const Email=localStorage.getItem("userEmail")
   const handleSubmit = async () => {
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const phoneNumber = document.getElementById("phoneNumber").value.trim();
+    const country = document.getElementById("country").value.trim();
+    const city = document.getElementById("city").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const zipCode = document.getElementById("zipCode").value.trim();
+  
+    // Check if any required field is empty
+    if (!firstName || !lastName || !phoneNumber || !country || !city || !address || !zipCode) {
+      alert("Please fill in all required fields before submitting.");
+      return;
+    }
+  
+    // Proceed with form submission
+    console.log("Form submitted successfully!", { firstName, lastName, phoneNumber, country, city, address, zipCode });
     try {
-      const res = await updateProfile(formData);
+        const res = await updateProfile(formData);
+        localStorage.setItem("isNewUser", "false");
+        console.log(res);
       if(res){
         navigate("/");
       }
@@ -24,18 +42,24 @@ const ProfilePictureCropper = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await getProfile(localStorage.getItem("userEmail"));
-        console.log(res);
-        setFormData(res);
-      } catch (error) {
-        console.error(error.response.data.msg);
+  const fetchProfile = async () => {
+    try {
+      const res = await getProfile(localStorage.getItem("userEmail"));
+      if (res) {
+        setFormData(res.data);
+      } else {
+        console.warn("Profile data is empty or undefined.");
+        setFormData({}); // Fallback to empty object
       }
-    };
+    } catch (error) {
+      console.error(error?.response?.data?.msg ?? error.message ?? "Failed to fetch profile.");
+    }
+  };
+  
+  useEffect(() => {
     fetchProfile();
   }, []);
+  
   
 
   const [dogImg, setDogImg] = useState(null);
@@ -198,6 +222,7 @@ const ProfilePictureCropper = () => {
               className="w-full p-2 border rounded-md"
               type="text"
               placeholder="First Name"
+              id="firstName"
               value={formData && formData.firstName ? formData.firstName : ""}
               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
             />
@@ -210,6 +235,8 @@ const ProfilePictureCropper = () => {
               placeholder="Last Name"
               value={formData && formData.lastName ? formData.lastName : ""}
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              required
+              id="lastName"
             />
           </div>
         </div>
@@ -218,8 +245,9 @@ const ProfilePictureCropper = () => {
           <input
             className="w-full p-2 border rounded-md"
             type="email"
-            value={formData && formData.email ? formData.email : ""}
+            value={Email}
             readOnly
+            
           />
         </div>
         <div className="mb-4">
@@ -228,6 +256,7 @@ const ProfilePictureCropper = () => {
             className="w-full p-2 border rounded-md"
             type="tel"
             placeholder="Phone Number"
+            id="phoneNumber"
             value={formData && formData.phoneNumber ? formData.phoneNumber : ""}
             onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
           />
@@ -239,6 +268,7 @@ const ProfilePictureCropper = () => {
               className="w-full p-2 border rounded-md"
               type="text"
               placeholder="Country"
+              id="country"
               value={formData && formData.country ? formData.country : ""}
               onChange={(e) => setFormData({ ...formData, country: e.target.value })}
             />
@@ -249,6 +279,7 @@ const ProfilePictureCropper = () => {
               className="w-full p-2 border rounded-md"
               type="text"
               placeholder="City"
+              id="city"
               value={formData && formData.city ? formData.city : ""}
 
               onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -262,6 +293,7 @@ const ProfilePictureCropper = () => {
               className="w-full p-2 border rounded-md"
               type="text"
               placeholder="Address"
+              id="address"
               value={formData && formData.address ? formData.address : ""}
 
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -270,6 +302,7 @@ const ProfilePictureCropper = () => {
           <div className="flex-1">
             <label className="block mb-1 font-bold text-gray-700">Zip Code</label>
             <input
+              id="zipCode"
               className="w-full p-2 border rounded-md"
               type="text"
               placeholder="Zip code"
@@ -279,7 +312,7 @@ const ProfilePictureCropper = () => {
             />
           </div>
         </div>
-        <button onClick={handleSubmit} className="w-full p-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+        <button type="submit" onClick={handleSubmit} className="w-full p-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
           Save Changes
         </button>
       </div>

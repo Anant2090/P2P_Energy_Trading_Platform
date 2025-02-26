@@ -1,8 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./BuySell.css";
 import DataTable from "./DataTable";
 
+import { useNavigate } from "react-router-dom";
+
 const BuySell = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+      const flag = localStorage.getItem("isNewUser") === "true"; 
+      if (flag) {
+        alert("Fill all the data first!");
+        navigate("/Profile", { replace: true });
+      }
+    }, []);
   const [transactionType, setTransactionType] = useState("buy");
   const [formData, setFormData] = useState({
     energy: "",
