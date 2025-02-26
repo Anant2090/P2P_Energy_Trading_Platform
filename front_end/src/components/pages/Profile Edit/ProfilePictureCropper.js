@@ -1,15 +1,43 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useState, useEffect } from "react";
 import Cropper from "react-easy-crop";
 import Slider from "@material-ui/core/Slider";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import ImgDialog from "./ImgDialog";
 import { FcCamera } from "react-icons/fc";
 import getCroppedImg from "./cropImage";
-import { FaUpload } from "react-icons/fa";
+import { updateProfile } from "../services/profileService";
+import { useNavigate } from "react-router-dom";
+import { getProfile } from "../services/profileService";
 
 const ProfilePictureCropper = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(null);
+
+  const handleSubmit = async () => {
+    try {
+      const res = await updateProfile(formData);
+      if(res){
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error.response.data.msg);
+    }
+  };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await getProfile(localStorage.getItem("userEmail"));
+        console.log(res);
+        setFormData(res);
+      } catch (error) {
+        console.error(error.response.data.msg);
+      }
+    };
+    fetchProfile();
+  }, []);
+  
+
   const [dogImg, setDogImg] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
@@ -61,7 +89,7 @@ const ProfilePictureCropper = () => {
   };
 
   return (
-    <div className="mt-2 animate-fadeIn animate-slideIn">
+    <div className="mt-2 animate-fadeIn">
       {isImageUploaded && !isImageCropped && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 animate-fadeIn">
           <div className="bg-white p-8 rounded-lg shadow-lg w-4/5 max-w-lg animate-slideIn flex flex-col items-center">
@@ -169,7 +197,9 @@ const ProfilePictureCropper = () => {
             <input
               className="w-full p-2 border rounded-md"
               type="text"
-              placeholder="Anant"
+              placeholder="First Name"
+              value={formData && formData.firstName ? formData.firstName : ""}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
             />
           </div>
           <div className="flex-1">
@@ -177,7 +207,9 @@ const ProfilePictureCropper = () => {
             <input
               className="w-full p-2 border rounded-md"
               type="text"
-              placeholder="Sherkahen"
+              placeholder="Last Name"
+              value={formData && formData.lastName ? formData.lastName : ""}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
             />
           </div>
         </div>
@@ -186,7 +218,8 @@ const ProfilePictureCropper = () => {
           <input
             className="w-full p-2 border rounded-md"
             type="email"
-            placeholder="anant@gmail.com"
+            value={formData && formData.email ? formData.email : ""}
+            readOnly
           />
         </div>
         <div className="mb-4">
@@ -194,7 +227,9 @@ const ProfilePictureCropper = () => {
           <input
             className="w-full p-2 border rounded-md"
             type="tel"
-            placeholder="+84 789 373 568"
+            placeholder="Phone Number"
+            value={formData && formData.phoneNumber ? formData.phoneNumber : ""}
+            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
           />
         </div>
         <div className="flex justify-between mb-4">
@@ -203,7 +238,9 @@ const ProfilePictureCropper = () => {
             <input
               className="w-full p-2 border rounded-md"
               type="text"
-              placeholder="India"
+              placeholder="Country"
+              value={formData && formData.country ? formData.country : ""}
+              onChange={(e) => setFormData({ ...formData, country: e.target.value })}
             />
           </div>
           <div className="flex-1">
@@ -211,7 +248,10 @@ const ProfilePictureCropper = () => {
             <input
               className="w-full p-2 border rounded-md"
               type="text"
-              placeholder="Pune"
+              placeholder="City"
+              value={formData && formData.city ? formData.city : ""}
+
+              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
             />
           </div>
         </div>
@@ -221,7 +261,10 @@ const ProfilePictureCropper = () => {
             <input
               className="w-full p-2 border rounded-md"
               type="text"
-              placeholder="Pangaon"
+              placeholder="Address"
+              value={formData && formData.address ? formData.address : ""}
+
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             />
           </div>
           <div className="flex-1">
@@ -229,11 +272,14 @@ const ProfilePictureCropper = () => {
             <input
               className="w-full p-2 border rounded-md"
               type="text"
-              placeholder="431522"
+              placeholder="Zip code"
+              value={formData && formData.zipCode ? formData.zipCode : ""}
+
+              onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
             />
           </div>
         </div>
-        <button className="w-full p-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+        <button onClick={handleSubmit} className="w-full p-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
           Save Changes
         </button>
       </div>

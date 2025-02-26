@@ -6,12 +6,12 @@ const Footer = () => {
   return (
     <>
       <footer
-        className="bg-cover bg-center text-white py-8 h-[200px] mt-5 animate-fadeIn animate-slideIn "
+        className="bg-cover bg-center text-white py-8 h-[200px] mt-5 animate-fadeIn"
         style={{
           backgroundImage: "url('/images/foot.png')", // Corrected path to the image
         }}
       >
-        <div className="flex justify-around items-center justify-center">
+        <div className="flex justify-around items-center">
           <fot1 className="flex flex-col justify-center ">
             <div className="font-bold text-lg mb-2">CONTACT INFO</div>
             <div className="w-[200px]">
@@ -74,7 +74,7 @@ const Footer = () => {
           </foot1>
         </div>
       </footer>
-      <div className="h-[7vh] bg-[#26395B] flex items-center justify-center justify-around text-white text-[13px]">
+      <div className="h-[7vh] bg-[#26395B] flex items-center justify-center text-white text-[13px]">
         <div className="flex ">
           <div>Privacy Policy</div>
           <div class="w-[2px] h-5 bg-white mx-4"></div>

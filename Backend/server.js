@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
+const profileRoutes = require("./routes/profile");
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 
 const PORT =5000;
 mongoose.connect("mongodb+srv://p2penergytraders:Antman%40123@cluster0.yft23.mongodb.net/new-app?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })

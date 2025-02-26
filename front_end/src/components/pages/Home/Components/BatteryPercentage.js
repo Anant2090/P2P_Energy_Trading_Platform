@@ -9,7 +9,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const BatteryPercentage = ({ Battety_percentage }) => {
   // Example battery usage data
-  const Battery_percentage_int = parseInt(Battety_percentage);
+  const Battery_percentage_int = Math.floor(Math.random() * 100);
   const data = {
     datasets: [
       {

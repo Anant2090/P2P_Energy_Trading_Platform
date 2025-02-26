@@ -1,6 +1,5 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { CgProfile } from "react-icons/cg";
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -12,7 +11,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="animate-fadeIn animate-slideIn">
+        <nav className="animate-fadeIn">
             <div className="flex items-center justify-between pl-2 pr-2 bg-[#a7a4a481] h-[10vh] shadow-md">
                 <div className="Logo flex items-center">
                     <img

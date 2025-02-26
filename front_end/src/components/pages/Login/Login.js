@@ -13,10 +13,15 @@ function Login() {
       try {
         const res = await login({ email, password });
         localStorage.setItem("token", res.data.token);
-        alert("Login successful!");
-        navigate("/dashboard");
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("isNewUser", res.data.isNewUser);
+        if (res.data.isNewUser) {
+          navigate("/Profile");
+        } else {
+          navigate("/");
+        }
       } catch (error) {
-        alert("Invalid credentials");
+        alert(error.response.data.msg);
       }
     };
 
