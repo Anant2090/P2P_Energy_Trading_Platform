@@ -1,18 +1,18 @@
-⚡ Peer-to-Peer Energy Trading System using Blockchain
+# ⚡ Peer-to-Peer Energy Trading System using Blockchain
 
 Welcome to the Peer-to-Peer (P2P) Energy Trading System, a decentralized application (DApp) built using Blockchain technology to enable secure, transparent, and efficient energy transactions between consumers and prosumers.
 
-📌 Overview
+# 📌 Overview
 
 This project leverages blockchain technology to create a decentralized marketplace where individuals can trade surplus energy without the need for traditional intermediaries. By utilizing smart contracts on the Ethereum blockchain, transactions are automated, secure, and immutable, ensuring fair and transparent energy distribution. This system enhances energy efficiency, promotes renewable energy adoption, and empowers users with greater control over their energy consumption and sales.
 
-🎥 Project Demo
+# 🎥 Project Demo
 
 Click the image below to watch a demo of the Peer-to-Peer Energy Trading System in action.
 
+![Energy Trading Demo](https://drive.google.com/file/d/1NfWkgFfHTXqyRYik0uhDgQNpSZhoG3SJ/view?usp=sharing/)
 
-
-🔥 Features
+# 🔥 Features
 
 ✅ Decentralized Energy Trading
 
@@ -42,7 +42,7 @@ Encourages users to generate and trade renewable energy, supporting sustainable 
 
 Users can track energy production, consumption, and transactions in real time.
 
-🛠️ Technologies Used
+# 🛠️ Technologies Used
 
 Blockchain: Ethereum network for secure and decentralized energy trading.
 
@@ -56,7 +56,7 @@ React: Frontend framework for building the user interface.
 
 IPFS (Optional): Decentralized storage for storing trade history and records.
 
-🔑 How to Use
+# 🔑 How to Use
 
 1️⃣ Register
 
@@ -82,7 +82,7 @@ Smart contracts validate and execute trades securely on the blockchain.
 
 Users track transaction history, energy balances, and usage insights.
 
-🚀 Future Enhancements
+# 🚀 Future Enhancements
 
 Integration with IoT Smart Meters for real-time energy data updates.
 
