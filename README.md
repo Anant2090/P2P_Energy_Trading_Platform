@@ -10,7 +10,7 @@ This project leverages blockchain technology to create a decentralized marketpla
 
 Click the image below to watch a demo of the Peer-to-Peer Energy Trading System in action.
 
-![Energy Trading Demo](https://drive.google.com/file/d/1NfWkgFfHTXqyRYik0uhDgQNpSZhoG3SJ/view?usp=sharing/)
+![Energy Trading Demo](https://i.imgur.com/aRUn5T6.png)
 
 # 🔥 Features
 
