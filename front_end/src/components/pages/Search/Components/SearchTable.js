@@ -23,12 +23,14 @@ const SearchTable = ({ title, data, onActionClick }) => {
               <td className="border px-4 py-2 text-center">{item.distance}</td>
               <td className="border px-4 py-2 text-center">
                 <button
-                  className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                  className={`px-3 py-1 text-white rounded ${
+                    item.trade === "buy" ? "bg-blue-500 hover:bg-blue-600" : "bg-red-500 hover:bg-red-600"
+                  }`}
                   onClick={() =>
                     onActionClick(item.name, item.price, item.energy, item.distance, item.trade)
                   }
                 >
-                  {item.trade}
+                  {item.trade === "buy" ? "Buy" : "Sell"}
                 </button>
               </td>
             </tr>

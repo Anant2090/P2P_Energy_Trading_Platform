@@ -8,9 +8,9 @@ const NewRequest = () => {
       <div className="new-request-card">
         <div className="request-info">
           <p><strong>Farmer Name:</strong></p>
-          <p><strong>Rate:</strong></p>
+          <p><strong>Rate Price:</strong></p>
           <p><strong>Energy:</strong></p>
-          <p><strong>Total Price:</strong></p>
+          <p><strong>Request Type:</strong></p>
         </div>
         <div className="request-actions">
           <button className="accept-button">Accept</button>
