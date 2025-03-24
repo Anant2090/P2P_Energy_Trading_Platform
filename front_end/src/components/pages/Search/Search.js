@@ -1,69 +1,47 @@
-// src/components/pages/Search/Search.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Search.css"; // Import custom CSS for styling
 import SearchTable from "./Components/SearchTable";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { getTrades } from "../services/tradeService";
 
 const Search = () => {
-  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [distanceFilter, setDistanceFilter] = useState("");
+  const [tradeRequests, setTradeRequests] = useState([]);
 
   useEffect(() => {
-    const flag = localStorage.getItem("isNewUser") === "true";
-    if (flag) {
-      alert("Fill all the data first!");
-      navigate("/Profile", { replace: true });
-    }
+    fetchTrades();
   }, []);
 
-  const framer = [
-    {
-      name: "Anant",
-      price: "$3",
-      energy: "10 kWh",
-      distance: "2 km",
-      trade: "sell",
-    },
-    {
-      name: "Imran",
-      price: "$4",
-      energy: "15 kWh",
-      distance: "3 km",
-      trade: "buy",
-    },
-    {
-      name: "Suraj",
-      price: "$5",
-      energy: "20 kWh",
-      distance: "5 km",
-      trade: "sell",
-    },
-    {
-      name: "ABC",
-      price: "$2",
-      energy: "15 Units",
-      distance: "1 km",
-      trade: "buy",
-    },
-    {
-      name: "XYZ",
-      price: "$1",
-      energy: "20 Units",
-      distance: "0.5 km",
-      trade: "buy",
-    },
-    {
-      name: "PRQ",
-      price: "$3",
-      energy: "5 Units",
-      distance: "2 km",
-      trade: "sell",
-    },
-  ];
+  const fetchTrades = async () => {
+    try {
+      const response = await getTrades();
+      setTradeRequests(response.data); // Store all trade requests (Buy + Sell)
+    } catch (error) {
+      console.error("Error fetching trades:", error);
+    }
+  };
+
+  const handleSearch = () => {
+    let filteredData = tradeRequests;
+
+    if (searchTerm) {
+      filteredData = filteredData.filter((trade) =>
+        trade.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (distanceFilter) {
+      filteredData = filteredData.filter((trade) =>
+        parseFloat(trade.distance) <= parseFloat(distanceFilter)
+      );
+    }
+
+    return filteredData;
+  };
 
   return (
     <div>
-      <div className="search-container animate-fadeIn animate-slideIn">
+      <div className="search-container animate-fadeIn">
         {/* Search Section */}
         <div className="search-section">
           <div className="form-group">
@@ -73,6 +51,8 @@ const Search = () => {
               id="farmerName"
               name="farmerName"
               placeholder="Name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
@@ -83,22 +63,21 @@ const Search = () => {
               id="distance"
               name="distance"
               placeholder="Distance"
+              value={distanceFilter}
+              onChange={(e) => setDistanceFilter(e.target.value)}
             />
           </div>
 
-          <button className="search-button ">Search</button>
+          <button className="search-button" onClick={fetchTrades}>
+            Search
+          </button>
         </div>
       </div>
+
+      {/* Display filtered Trade Requests */}
       <SearchTable
-        title="Farmers"
-        data={framer}
-        onActionClick={(name, price, energy, distance, trade) =>
-          alert(
-            `Action: ${
-              trade === "buy" ? "Buy" : "Sell"
-            }!\nName: ${name}\nPrice: ${price}\nEnergy: ${energy}\nDistance: ${distance}`
-          )
-        }
+        title="Trade Requests"
+        data={handleSearch()}
       />
     </div>
   );

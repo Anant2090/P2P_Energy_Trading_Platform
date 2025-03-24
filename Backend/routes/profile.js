@@ -27,7 +27,6 @@ router.post("/profileupdate", async (req, res) => {
 router.get("/getprofile", async (req, res) => {
   try {
     const { email } = req.query; 
-    console.log(email) // Extract email from query parameters
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: "User not found" });
     res.json(user);

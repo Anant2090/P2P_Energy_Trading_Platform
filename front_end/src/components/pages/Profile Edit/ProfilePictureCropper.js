@@ -29,11 +29,9 @@ const ProfilePictureCropper = () => {
     }
   
     // Proceed with form submission
-    console.log("Form submitted successfully!", { firstName, lastName, phoneNumber, country, city, address, zipCode });
     try {
         const res = await updateProfile(formData);
         localStorage.setItem("isNewUser", "false");
-        console.log(res);
       if(res){
         navigate("/");
       }

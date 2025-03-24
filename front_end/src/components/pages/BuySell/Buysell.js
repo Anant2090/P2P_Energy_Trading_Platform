@@ -1,42 +1,44 @@
 import React, { useEffect, useState } from "react";
-import "./BuySell.css";
 import DataTable from "./DataTable";
-
-import { useNavigate } from "react-router-dom";
+import { getTrades, createTrade } from "../services/tradeService";
 
 const BuySell = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-      const flag = localStorage.getItem("isNewUser") === "true"; 
-      if (flag) {
-        alert("Fill all the data first!");
-        navigate("/Profile", { replace: true });
-      }
-    }, []);
-  const [transactionType, setTransactionType] = useState("buy");
+  const [transactionType, setTransactionType] = useState(
+    localStorage.getItem("transactionType") || "buy"
+  );
   const [formData, setFormData] = useState({
+    name: "",
     energy: "",
     price: "",
     distance: "",
   });
   const [errors, setErrors] = useState({});
-  const [showModal, setShowModal] = useState(false);
+  const [buyRequests, setBuyRequests] = useState([]);
+  const [sellRequests, setSellRequests] = useState([]);
 
-  const buyers = [
-    { name: "Anant", price: "$3", energy: "10 kWh", distance: "2 km" },
-    { name: "Imran", price: "$4", energy: "15 kWh", distance: "3 km" },
-    { name: "Suraj", price: "$5", energy: "20 kWh", distance: "5 km" },
-  ];
+  useEffect(() => {
+    fetchTrades();
+  }, []);
 
-  const sellers = [
-    { name: "ABC", price: "$2", energy: "15 Units", distance: "1 km" },
-    { name: "XYZ", price: "$1", energy: "20 Units", distance: "0.5 km" },
-    { name: "PRQ", price: "$3", energy: "5 Units", distance: "2 km" },
-  ];
+  const fetchTrades = async () => {
+    try {
+      const response = await getTrades();
+      const trades = response.data;
+      setBuyRequests(trades.filter((trade) => trade.tradeType === "buy"));
+      setSellRequests(trades.filter((trade) => trade.tradeType === "sell"));
+    } catch (error) {
+      console.error("Error fetching trades:", error);
+    }
+  };
+
+  const handleTransactionToggle = (type) => {
+    setTransactionType(type);
+    localStorage.setItem("transactionType", type);
+  };
 
   const validateForm = () => {
     const newErrors = {};
+    if (!formData.name) newErrors.name = "Name is required";
     if (!formData.energy) newErrors.energy = "Energy is required";
     if (!formData.price) newErrors.price = "Price is required";
     if (!formData.distance) newErrors.distance = "Distance is required";
@@ -52,130 +54,146 @@ const BuySell = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      setShowModal(true); // Show success modal
+    if (!validateForm()) return;
+
+    const newTrade = {
+      name: formData.name,
+      price: formData.price,
+      energy: formData.energy,
+      distance: formData.distance,
+      tradeType: transactionType,
+    };
+
+    try {
+      await createTrade(newTrade);
+      fetchTrades();
+      setFormData({ name: "", energy: "", price: "", distance: "" });
+      alert("Trade request sent!");
+    } catch (error) {
+      console.error("Error creating trade:", error);
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setFormData({ energy: "", price: "", distance: "" });
-  };
-
   return (
-    <div className=" m-2 rounded-lg bg-[#faf9faaa] ">
+    <div className="m-2 rounded-lg bg-gray-100 p-4 shadow-lg">
       <div
-        className={`buy-sell-container ${transactionType} animate-fadeIn animate-slideIn `}
+        className={`p-4 ${
+          transactionType === "buy" ? "border-green-500" : "border-red-500"
+        } border-2 rounded-lg animate-fadeIn`}
       >
-        {/* BuySell Section */}
-        <div className="buy-sell-section bg-[#faf9fa0f]">
-          <h2 className="title ">
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h2 className="text-center text-2xl font-semibold text-gray-700 mb-4">
             {transactionType === "buy" ? "Buy Energy" : "Sell Energy"}
           </h2>
 
-          <div className="transaction-toggle">
+          <div className="flex justify-center gap-4 mb-6">
             <button
-              className={`toggle-button ${
-                transactionType === "buy" ? "active-buy" : ""
+              className={`px-6 py-2 rounded-lg font-bold ${
+                transactionType === "buy"
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-200 text-black"
               }`}
-              onClick={() => setTransactionType("buy")}
+              onClick={() => handleTransactionToggle("buy")}
             >
               Buy
             </button>
             <button
-              className={`toggle-button ${
-                transactionType === "sell" ? "active-sell" : ""
+              className={`px-6 py-2 rounded-lg font-bold ${
+                transactionType === "sell"
+                  ? "bg-red-500 text-white"
+                  : "bg-gray-200 text-black"
               }`}
-              onClick={() => setTransactionType("sell")}
+              onClick={() => handleTransactionToggle("sell")}
             >
               Sell
             </button>
           </div>
 
-          <form className="transaction-form" onSubmit={handleSubmit}>
-            <label>
-              {transactionType === "buy"
-                ? "Energy Required (kWh):"
-                : "Energy For Sell (kWh):"}
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div>
+              <label className="block font-medium text-gray-600">Name:</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded-lg"
+                placeholder="Enter your name"
+              />
+              {errors.name && (
+                <span className="text-red-500 text-sm">{errors.name}</span>
+              )}
+            </div>
+            <div>
+              <label className="block font-medium text-gray-600">
+                {transactionType === "buy"
+                  ? "Energy Required (kWh):"
+                  : "Energy For Sale (kWh):"}
+              </label>
               <input
                 type="number"
                 name="energy"
                 value={formData.energy}
                 onChange={handleInputChange}
-                placeholder={`Enter ${
-                  transactionType === "buy" ? "amount to buy" : "energy to sell"
-                }`}
+                className="w-full p-2 border rounded-lg"
+                placeholder="Enter energy amount"
               />
-              {errors.energy && <span className="error">{errors.energy}</span>}
-            </label>
-            <label>
-              Price (per kWh):
+              {errors.energy && (
+                <span className="text-red-500 text-sm">{errors.energy}</span>
+              )}
+            </div>
+            <div>
+              <label className="block font-medium text-gray-600">
+                Price (per kWh):
+              </label>
               <input
                 type="number"
                 name="price"
                 value={formData.price}
                 onChange={handleInputChange}
-                placeholder={`Enter ${
-                  transactionType === "buy" ? "max price" : "selling price"
-                }`}
+                className="w-full p-2 border rounded-lg"
+                placeholder="Enter price"
               />
-              {errors.price && <span className="error">{errors.price}</span>}
-            </label>
-            <label>
-              Distance Preference (km):
+              {errors.price && (
+                <span className="text-red-500 text-sm">{errors.price}</span>
+              )}
+            </div>
+            <div>
+              <label className="block font-medium text-gray-600">
+                Distance Preference (km):
+              </label>
               <input
                 type="number"
                 name="distance"
                 value={formData.distance}
                 onChange={handleInputChange}
+                className="w-full p-2 border rounded-lg"
                 placeholder="Enter preferred distance"
               />
               {errors.distance && (
-                <span className="error">{errors.distance}</span>
+                <span className="text-red-500 text-sm">{errors.distance}</span>
               )}
-            </label>
+            </div>
             <button
               type="submit"
-              className={`submit-button ${transactionType}-button`}
+              className={`w-full py-2 rounded-lg font-bold text-white ${
+                transactionType === "buy" ? "bg-green-500" : "bg-red-500"
+              }`}
             >
               {transactionType === "buy" ? "Buy" : "Sell"}
             </button>
           </form>
         </div>
 
-        {/* Tables Section */}
         <DataTable
           title={
             transactionType === "buy" ? "Available Sellers" : "Available Buyers"
           }
-          data={transactionType === "buy" ? sellers : buyers}
+          data={transactionType === "buy" ? sellRequests : buyRequests}
           actionLabel={transactionType === "buy" ? "Buy" : "Sell"}
-          onActionClick={(name, price, energy, distance) =>
-            alert(
-              `Action: ${
-                transactionType === "buy" ? "Buy" : "Sell"
-              }!\nName: ${name}\nPrice: ${price}\nEnergy: ${energy}\nDistance: ${distance}`
-            )
-          }
         />
-
-        {/* Success Modal */}
-        {showModal && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h3>Successful!</h3>
-              <p>
-                You have successfully{" "}
-                {transactionType === "buy" ? "bought" : "sold"} energy.
-              </p>
-              <button onClick={closeModal} className="close-modal-button">
-                Close
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

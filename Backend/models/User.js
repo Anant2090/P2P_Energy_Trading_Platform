@@ -13,6 +13,8 @@ const UserSchema = new mongoose.Schema({
     zipCode: { type: String, default: "" },
     profilePicture: { type: String, default: "" },
     isNewUser: { type: Boolean, default: true },
+    incomingRequests: { type: String, default: "0"},
+    outgoingRequests: { type: String, default: "0"},
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", UserSchema);

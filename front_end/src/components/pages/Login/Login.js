@@ -15,6 +15,7 @@ function Login() {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("userEmail", email);
         localStorage.setItem("isNewUser", res.data.isNewUser);
+        localStorage.setItem("username", res.data.username);
         if (res.data.isNewUser) {
           navigate("/Profile");
         } else {
