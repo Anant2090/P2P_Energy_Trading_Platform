@@ -1,13 +1,35 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "./DataTable";
 import { getTrades, createTrade } from "../services/tradeService";
+import { getProfile } from "../services/profileService";const BuySell = () => {
+  const Email = localStorage.getItem("userEmail");
+const [profile, setProfile] = useState(null);
 
-const BuySell = () => {
+useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const res = await getProfile(Email);
+      if (res.data) {
+        setProfile({
+          fullName: `${res.data.firstName} ${res.data.lastName}`
+        });
+
+      }
+      console.log(res.data);
+      console.log("fullname;", profile);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+  };
+
+  fetchProfile();
+}, [Email]);
+
   const [transactionType, setTransactionType] = useState(
     localStorage.getItem("transactionType") || "buy"
   );
   const [formData, setFormData] = useState({
-    name: "",
+    // name: "",
     energy: "",
     price: "",
     distance: "",
@@ -38,7 +60,7 @@ const BuySell = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required";
+    // if (!formData.name) newErrors.name = "Name is required";
     if (!formData.energy) newErrors.energy = "Energy is required";
     if (!formData.price) newErrors.price = "Price is required";
     if (!formData.distance) newErrors.distance = "Distance is required";
@@ -59,19 +81,20 @@ const BuySell = () => {
     if (!validateForm()) return;
 
     const newTrade = {
-      name: formData.name,
+      email: localStorage.getItem("userEmail"),
+      name: profile.fullName || "Unknown Farmer", 
       price: formData.price,
       energy: formData.energy,
       distance: formData.distance,
       tradeType: transactionType,
     };
-
     try {
       await createTrade(newTrade);
       fetchTrades();
-      setFormData({ name: "", energy: "", price: "", distance: "" });
+      setFormData({ energy: "", price: "", distance: "" });
       alert("Trade request sent!");
     } catch (error) {
+      alert(error.response.data.message);
       console.error("Error creating trade:", error);
     }
   };
@@ -112,7 +135,7 @@ const BuySell = () => {
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
+            {/* <div>
               <label className="block font-medium text-gray-600">Name:</label>
               <input
                 type="text"
@@ -125,7 +148,7 @@ const BuySell = () => {
               {errors.name && (
                 <span className="text-red-500 text-sm">{errors.name}</span>
               )}
-            </div>
+            </div> */}
             <div>
               <label className="block font-medium text-gray-600">
                 {transactionType === "buy"

@@ -20,7 +20,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/trade", tradeRoutes);
 app.use("/api/request", requestRoutes);
 
-const PORT =5000;
+const PORT =8000;
 mongoose.connect("mongodb+srv://p2penergytraders:Antman%40123@cluster0.yft23.mongodb.net/new-app?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log("MongoDB connected");

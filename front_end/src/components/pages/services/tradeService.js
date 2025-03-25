@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/trade";
+const API_URL = "http://localhost:8000/api/trade";
 
 export const createTrade = async (tradeData) => {
   return await axios.post(`${API_URL}/create`, tradeData);

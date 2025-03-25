@@ -15,6 +15,8 @@ const UserSchema = new mongoose.Schema({
     isNewUser: { type: Boolean, default: true },
     incomingRequests: { type: String, default: "0"},
     outgoingRequests: { type: String, default: "0"},
+    existingBuyTrade: { type:Boolean, default: false},
+    existingSellTrade: { type:Boolean, default: false},
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", UserSchema);

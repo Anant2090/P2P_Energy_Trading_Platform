@@ -1,5 +1,4 @@
-// Import necessary modules
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -15,18 +14,54 @@ import {
 // Register Chart.js components
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Title);
 
-const BatteryUsageChart = ({ Battery_Usage }) => {
-  // Example battery usage data
-  const data = {
-    labels: Battery_Usage.label, // X-axis labels
+const BatteryUsageChart = () => {
+  const [batteryUsage, setBatteryUsage] = useState({ labels: [], data: [] });
+
+  useEffect(() => {
+    const fetchBatteryData = async () => {
+      try {
+        const response = await fetch(
+          'https://api.thingspeak.com/channels/2736502/feeds.json?api_key=F3680PI3K5CQPRB0&results=10'
+        );
+        const json = await response.json();
+
+        const labels = json.feeds.map(feed => new Date(feed.created_at).toLocaleTimeString());
+        const data = json.feeds.map(feed => parseInt(feed.field1, 10));
+
+        setBatteryUsage({ labels, data });
+      } catch (error) {
+        console.error('Error fetching battery data:', error);
+      }
+    };
+
+    fetchBatteryData();
+    const interval = setInterval(fetchBatteryData, 15000); // Fetch every 15 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Function to determine color dynamically
+  const getBatteryColor = (batteryLevel) => {
+    if (batteryLevel >= 75) return 'green';
+    if (batteryLevel >= 50) return 'yellow';
+    return 'red';
+  };
+
+  const borderColors = batteryUsage.data.map(level => getBatteryColor(level));
+  const backgroundColors = batteryUsage.data.map(level =>
+    level >= 75 ? 'rgba(0, 128, 0, 0.2)' : level >= 50 ? 'rgba(255, 165, 0, 0.2)' : 'rgba(255, 0, 0, 0.2)'
+  );
+
+  const chartData = {
+    labels: batteryUsage.labels,
     datasets: [
       {
-        data: Battery_Usage.data, // Y-axis data points
-        borderColor: 'green',
-        backgroundColor: 'rgba(0, 128, 0, 0.2)',
-        tension: 0.4, // Curvature of the line
-        pointRadius: 2,
-        pointBackgroundColor: 'green',
+        data: batteryUsage.data,
+        borderColor: borderColors,
+        backgroundColor: backgroundColors,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: borderColors,
         fill: true,
       },
     ],
@@ -35,55 +70,31 @@ const BatteryUsageChart = ({ Battery_Usage }) => {
   const options = {
     responsive: true,
     plugins: {
-      legend: {
-        display: false, // Hide the legend
-      },
+      legend: { display: false },
       tooltip: {
-        callbacks: {
-          label: (context) => `${context.raw}%`,
-        },
+        callbacks: { label: (context) => `${context.raw}%` },
       },
       title: {
-        display: true, // Show the title
-        text: 'Battery Usage Over Time', // Title text
-        font: {
-          size: 16, // Title font size
-        },
-        color: 'black', // Title color
-        padding: {
-          top: 10,
-          bottom: 30,
-        },
+        display: true,
+        text: 'Battery Usage Over Time',
+        font: { size: 16 },
+        color: 'black',
+        padding: { top: 10, bottom: 30 },
       },
     },
     scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-        title: {
-          display: true,
-          text: 'Time',
-        },
-      },
+      x: { grid: { display: false }, title: { display: true, text: 'Time' } },
       y: {
-        grid: {
-          display: false,
-        },
+        grid: { display: false },
         min: 0,
         max: 100,
-        ticks: {
-          callback: (value) => `${value}%`,
-        },
-        title: {
-          display: true,
-          text: 'Battery Level',
-        },
+        ticks: { callback: (value) => `${value}%` },
+        title: { display: true, text: 'Battery Level' },
       },
     },
   };
 
-  return <Line data={data} options={options} />;
+  return <Line data={chartData} options={options} />;
 };
 
 export default BatteryUsageChart;

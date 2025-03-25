@@ -22,7 +22,7 @@ const DataTable = ({ title, data, actionLabel }) => {
             {data.map((item, index) => (
               <tr key={index} className="text-center border border-gray-300">
                 <td className="border border-gray-300 px-4 py-2">
-                  {item.name}
+                  {item.name || "Unknown"}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {item.price}
