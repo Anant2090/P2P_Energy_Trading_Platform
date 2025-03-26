@@ -1,8 +1,9 @@
 // Import necessary modules
 import React from "react";
 import "./NewRequest.css"; // For styling the component
+import { deleteRequest, deleteSellerRequest } from "../../services/requestService";
 
-const NewRequest = ({sellerName, price, energy}) => {
+const NewRequest = ({ sellerName, price, energy }) => {
   return (
     <div className="new-request-card">
       <div className="request-info">
@@ -20,8 +21,27 @@ const NewRequest = ({sellerName, price, energy}) => {
         </p>
       </div>
       <div className="request-actions">
-        <button className="accept-button">Accept</button>
-        <button className="reject-button">Reject</button>
+        <button
+          onClick={async () => {
+            try {
+              await deleteRequest(localStorage.getItem("userEmail"), sellerName);
+              alert("Request accepted!");
+            } catch (error) {
+              alert(error.response.data.msg);
+            }
+          }}
+          className="accept-button"
+        >
+          Accept
+        </button>
+        <button onClick={async () => {
+            try {
+              await deleteSellerRequest(sellerName);
+              alert("Request rejected!");
+            } catch (error) {
+              alert(error.response.data.msg);
+            }
+          }} className="reject-button">Reject</button>
       </div>
     </div>
   );

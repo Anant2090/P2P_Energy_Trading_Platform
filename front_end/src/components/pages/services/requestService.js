@@ -9,3 +9,12 @@ export const createRequest = async (RequestData) => {
 export const getUserRequest = async (email) => {
     return await axios.get(`${API_URL}/list?email=${email}`);
 }
+
+export const deleteRequest = async (email, seller_name) => {
+    return await axios.delete(`${API_URL}/delete?email=${email}&seller_name=${seller_name}`);
+}
+
+export const deleteSellerRequest = async (seller_name) => {
+  console.log(seller_name);
+  return await axios.delete(`${API_URL}/delete_request?seller_name=${seller_name}`);
+}
