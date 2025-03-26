@@ -58,11 +58,13 @@ const Navbar = () => {
               </NavLink>
             ))}
           </div>
-         
+
           <div className="Profile flex items-center gap-5 text-xl text-gray-700">
             {isLoggedIn ? (
               <>
-                <div className="bg-[#ab9d9d8a] text-black py-2 px-3 rounded-2xl">Current Price : {price}</div>
+                <div className="bg-[#ab9d9d8a] text-black py-2 px-3 rounded-2xl">
+                  Current Price : {price.toFixed(2)}
+                </div>
                 <NavLink to="/Profile">Profile</NavLink>
                 <button
                   onClick={handleLogout}
