@@ -13,10 +13,9 @@ const UserSchema = new mongoose.Schema({
     zipCode: { type: String, default: "" },
     profilePicture: { type: String, default: "" },
     isNewUser: { type: Boolean, default: true },
-    incomingRequests: { type: String, default: "0"},
-    outgoingRequests: { type: String, default: "0"},
-    existingBuyTrade: { type:Boolean, default: false},
-    existingSellTrade: { type:Boolean, default: false},
+    SellRequests: { type: Boolean, default: true},
+    existingBuyTrade: { type:Boolean, default: true},
+    existingSellTrade: { type:Boolean, default: true},
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", UserSchema);

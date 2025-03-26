@@ -35,21 +35,29 @@ const SearchTable = ({ title, data, actionLabel }) => {
               <td className="border px-4 py-2 text-center">
                 <button
                   className={`px-4 py-2 text-white rounded-md transition ${
-                    item.tradeType === "buy" ? "bg-green-500 hover:bg-green-700" : "bg-red-500 hover:bg-red-700"
+                    item.tradeType === "buy" ? "bg-red-500 hover:bg-red-700" : "bg-green-500 hover:bg-green-700"
                   }`}
                   onClick={async () => {
-                                        try {
-                                          if (item.tradeType === "buy") {
-                                            await createRequest({buyername: localStorage.getItem("userEmail"), sellername: item.name, energy: item.energy, price: item.price, distance: item.distance, tradeType: "Buy"});
-                                          } else {
-                                            await createRequest({buyername: item.name, sellername: localStorage.getItem("userEmail"), energy: item.energy, price: item.price, distance: item.distance, tradeType: "Sell"});
-                                          }
-                                        } catch (error) {
-                                          alert(error.response.data.msg);
-                                        }
-                                      }}
-                >
-                  {item.tradeType === "buy" ? "Buy" : "Sell"}
+                    try {
+                      if (actionLabel === "Buy") {
+                        console.log(
+                          "On clicking user need to go on login page"
+                        );
+                      } else {
+                        await createRequest({
+                          buyerName: item.name,
+                          sellerEmail: localStorage.getItem("userEmail"),
+                          energy: item.energy,
+                          price: item.price,
+                          distance: item.distance,
+                        });
+                      }
+                    } catch (error) {
+                      alert(error.response.data.msg);
+                    }
+                  }}
+                 >
+                  {item.tradeType === "buy" ? "Sell" : "Buy"}
                 </button>
               </td>
             </tr>

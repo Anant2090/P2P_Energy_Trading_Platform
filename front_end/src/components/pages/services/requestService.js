@@ -6,6 +6,6 @@ export const createRequest = async (RequestData) => {
   return await axios.post(`${API_URL}/create`, RequestData);
 };
 
-export const getUserRequest = async (username) => {
-    return await axios.get(`${API_URL}/getrequest?username=${username}`);
+export const getUserRequest = async (email) => {
+    return await axios.get(`${API_URL}/list?email=${email}`);
 }

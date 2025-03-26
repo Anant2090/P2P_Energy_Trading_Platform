@@ -5,20 +5,35 @@ import BatteryPercentage from "./Components/BatteryPercentage";
 import "./Home.css";
 import DataTable from "./Components/HistoryTable";
 import { useNavigate } from "react-router-dom";
-
+import { getUserRequest } from "../services/requestService";
+import { useState } from "react";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [userRequest, setUserRequests] = useState([]);
+
+  const fetchRequests = async () => {
+    try {
+      const response = await getUserRequest(localStorage.getItem("userEmail"));
+      const Requests = response.data;
+      setUserRequests(Requests);
+    } catch (error) {
+      console.error("Error fetching trades:", error);
+    }
+  };
 
   useEffect(() => {
-    
-    const flag = localStorage.getItem("isNewUser") === "true"; 
+    fetchRequests();
+  }, []);
+
+  useEffect(() => {
+    const flag = localStorage.getItem("isNewUser") === "true";
     if (flag) {
       alert("Fill all the data first!");
       navigate("/Profile", { replace: true });
     }
-  }, []); 
-  
+  }, []);
+
   const History = [
     { id: 1, name: "Anant", trade: "Sell" },
     { id: 2, name: "Imran", trade: "Buy" },
@@ -45,7 +60,6 @@ const Home = () => {
       <div className="battery-container rounded-lg ">
         <div className="battery-percentage">
           <BatteryPercentage Battety_percentage={Battery_Percentage_data} />
-          
         </div>
         <div className="battery-usage   bg-[#faf9fa89] p-2 rounded-md pt-5">
           <BatteryUsageChart Battery_Usage={Battery_Usage_data} />
@@ -55,10 +69,18 @@ const Home = () => {
         <div className="new-request-container bg-[#faf9fac2] ">
           <h2>New Request</h2>
           <div className="new-requests">
-            <NewRequest />
-            <NewRequest />
-            <NewRequest />
-            <NewRequest />
+            {userRequest && userRequest.length > 0 ? (
+              userRequest.map((request) => (
+                <NewRequest
+                  key={request.sellEmail}
+                  sellerName={request.sellerName}
+                  price={request.price}
+                  energy={request.energy}
+                />
+              ))
+            ) : (
+              <p>No requests available.</p>
+            )}
           </div>
           <div className="request-history-container bg-[#faf9fac2] ">
             <DataTable title={"History Table"} data={History} />

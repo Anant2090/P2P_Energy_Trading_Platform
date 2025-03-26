@@ -7,15 +7,14 @@ const router = express.Router();
 router.post("/create", async (req, res) => {
     try {
       const {email, name, energy, price, distance, tradeType } = req.body;
-      // console.log(req.body);
 
       const existuser = await User.findOne({ email: email });
-      // console.log(existuser);
-      if (tradeType === "buy" && existuser.existingBuyTrade) {
+
+      if (tradeType === "buy" && !existuser.existingBuyTrade) {
 
         return res.status(400).json({ message: "You have an existing buy trade" });
       }
-      else if (existuser.existingSellTrade) {
+      else if (tradeType === "sell" && !existuser.existingSellTrade) {
         return res.status(400).json({ message: "You have an existing sell trade" });
       }
       // console.log("Check for existing trade");
@@ -24,11 +23,11 @@ router.post("/create", async (req, res) => {
         return res.status(400).json({ error: "tradeType and distance are required" });
       }
   
-      const newTrade = new Trade({name, energy, price, distance, tradeType });
-      console.log("New trade created");
+      const newTrade = new Trade({email, name, energy, price, distance, tradeType });
+  
 
-      if (tradeType === "buy") {existuser.existingBuyTrade = true;}
-      else {existuser.existingSellTrade = true;}
+      if (tradeType === "buy") {existuser.existingBuyTrade = false;}
+      if (tradeType === "sell") {existuser.existingSellTrade = false;}
 
       await newTrade.save();
       await existuser.save();

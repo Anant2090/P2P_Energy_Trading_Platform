@@ -35,11 +35,12 @@ const BatteryPercentage = () => {
   }, []);
 
   const data = {
+    labels: ['Battery Charge', 'Battery Discharge'],
     datasets: [
       {
-        label: ['Battery Charging', 'Battery Discharge'],
         data: [batteryPercentage, 100 - batteryPercentage],
         backgroundColor: ['rgba(0, 200, 0, 1)', 'rgba(255, 0, 0, 1)'],
+        
       },
     ],
   };

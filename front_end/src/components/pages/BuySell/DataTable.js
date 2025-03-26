@@ -43,9 +43,17 @@ const DataTable = ({ title, data, actionLabel }) => {
                     onClick={async () => {
                       try {
                         if (actionLabel === "Buy") {
-                          await createRequest({buyername: localStorage.getItem("userEmail"), sellername: item.name, energy: item.energy, price: item.price, distance: item.distance, tradeType: "Buy"});
+                          console.log(
+                            "On clicking user need to go on login page"
+                          );
                         } else {
-                          await createRequest({buyername: item.name, sellername: localStorage.getItem("userEmail"), energy: item.energy, price: item.price, distance: item.distance, tradeType: "Sell"});
+                          await createRequest({
+                            buyerName: item.name,
+                            sellerEmail: localStorage.getItem("userEmail"),
+                            energy: item.energy,
+                            price: item.price,
+                            distance: item.distance,
+                          });
                         }
                       } catch (error) {
                         alert(error.response.data.msg);

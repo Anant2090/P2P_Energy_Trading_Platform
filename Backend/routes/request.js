@@ -1,66 +1,66 @@
 const express = require("express");
 const Request = require("../models/Request"); // Your Mongoose Request model
+const Trade = require("../models/Trade");
 const User = require("../models/User");
 const router = express.Router();
 
-// Create request
 router.post("/create", async (req, res) => {
   try {
-    const { buyername, sellername, energy, price, distance, tradeType } =
-      req.body;
+    const { buyerName, sellerEmail, energy, price, distance } = req.body;
 
-    if (!buyername || !sellername || !energy || !price || !distance) {
-      return res
-        .status(400)
-        .json({ msg: "tradeType and distance are required" });
+    if (!buyerName || !sellerEmail || !energy || !price || !distance) {
+      return res.status(400).json({ msg: "All fields are required" });
     }
 
-    if (tradeType === "Buy") {
-      var User_data = await User.findOne({ email: buyername });
-    } else {
-      var User_data = await User.findOne({ email: sellername });
-    }
-    if (parseInt(User_data.outgoingRequests) === 1) {
-      return res.status(400).json({ msg: "One request already exists" });
-    } else {
-      const newRequest = new Request({
-        buyername,
-        sellername,
-        energy,
-        price,
-        distance,
-      });
-      User_data.outgoingRequests = "1";
-      await User_data.save();
-      await newRequest.save();
+    const Seller_data = await User.findOne({ email: sellerEmail });
+    const Trader_data = await Trade.findOne({ name: buyerName });
+    const Buyer_data = await User.findOne({ email: Trader_data.email });
 
-      res
-        .status(201)
-        .json({ message: "Request created successfully", request: newRequest });
+    if (!Seller_data || !Trader_data || !Buyer_data) {
+      return res.status(404).json({ msg: "Invalid trade data" });
     }
+
+    if (Seller_data.SellRequests === false) {
+      return res.status(400).json({ msg: "Sell Request already exists" });
+    }
+
+    const buyerEmail = Buyer_data.email;
+    const sellerName = `${Seller_data.firstName} ${Seller_data.lastName}`;
+
+    const newRequest = new Request({ 
+      buyerEmail, 
+      buyerName, 
+      sellerEmail, 
+      sellerName, 
+      energy, 
+      price, 
+      distance 
+    });
+
+    Seller_data.SellRequests = false;
+    await newRequest.save();
+    await Seller_data.save();
+
+    res.status(201).json({ 
+      message: "Request created successfully", 
+      request: newRequest 
+    });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Fetch all requests
-router.get("/list", async (req, res) => {
-  try {
-    const requests = await Request.find();
-    res.json(requests);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (!res.headersSent) {
+      res.status(500).json({ error: error.message });
+    }
   }
 });
 
 // Fetch request for particular user
-router.get("/list/:username", async (req, res) => {
+router.get("/list/", async (req, res) => {
   try {
-    const { username } = req.params;
-    const requests = await Request.find({ username });
-    res.json(requests);
+    const { email } = req.query;
+    const requests = await Request.find({ buyerEmail:email });
+    return res.json(requests);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
