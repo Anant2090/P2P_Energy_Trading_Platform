@@ -15,7 +15,7 @@ Click the image below to watch a demo of the Peer-to-Peer Energy Trading System 
 
 # 🔥 Features
 
-✅ Decentralized Energy Trading
+✅ Decentralized Energy Trading platfrom
 
 Eliminates the need for a central authority, allowing direct peer-to-peer energy transactions.
 
