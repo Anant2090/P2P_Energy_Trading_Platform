@@ -53,14 +53,16 @@ router.get("/list", async (req, res) => {
 
 
 // Fetch all trades (Buy & Sell)
+// Fetch all trades (Buy & Sell)
 router.get("/trades", async (req, res) => {
-    try {
-      const trades = await Trade.find(); // Fetch all trade requests
+  try {
+      const trades = await Trade.find();
       res.json(trades);
-    } catch (error) {
+  } catch (error) {
       res.status(500).json({ error: error.message });
-    }
-  });
+  }
+});
+
   
 
 module.exports = router;

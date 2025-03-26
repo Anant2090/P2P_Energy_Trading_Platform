@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "./DataTable";
 import { getTrades, createTrade } from "../services/tradeService";
+import { usePriceStore } from "../../PriceStore";
 import { getProfile } from "../services/profileService";const BuySell = () => {
-  const Email = localStorage.getItem("userEmail");
+const Email = localStorage.getItem("userEmail");
 const [profile, setProfile] = useState(null);
 
-useEffect(() => {
-  const fetchProfile = async () => {
-    try {
-      const res = await getProfile(Email);
-      if (res.data) {
-        setProfile({
-          fullName: `${res.data.firstName} ${res.data.lastName}`
-        });
+const { price, updatePrice } = usePriceStore();
 
-      }
-      console.log(res.data);
-      console.log("fullname;", profile);
-    } catch (error) {
-      console.error("Error fetching profile:", error);
+const fetchProfile = async () => {
+  try {
+    const res = await getProfile(Email);
+    if (res.data) {
+      setProfile({
+        fullName: `${res.data.firstName} ${res.data.lastName}`
+      });
+
     }
-  };
+    console.log(res.data);
+    console.log("fullname;", profile);
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+  }
+};
 
+
+
+useEffect(() => {
+  fetchTrades();
   fetchProfile();
 }, [Email]);
 
@@ -38,9 +44,6 @@ useEffect(() => {
   const [buyRequests, setBuyRequests] = useState([]);
   const [sellRequests, setSellRequests] = useState([]);
 
-  useEffect(() => {
-    fetchTrades();
-  }, []);
 
   const fetchTrades = async () => {
     try {
@@ -62,8 +65,11 @@ useEffect(() => {
     const newErrors = {};
     // if (!formData.name) newErrors.name = "Name is required";
     if (!formData.energy) newErrors.energy = "Energy is required";
+    if (transactionType==="buy" && formData.price<price ) newErrors.price = "You can not buy at a price below the base price";
+    if (transactionType==="sell" && formData.price>price+5 ) newErrors.price = "You can only sell at a price 5 rs above the base price";
     if (!formData.price) newErrors.price = "Price is required";
-    if (!formData.distance) newErrors.distance = "Distance is required";
+
+    if (!formData.distance ) newErrors.distance = "Distance is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
