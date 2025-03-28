@@ -18,3 +18,7 @@ export const deleteSellerRequest = async (seller_name) => {
   console.log(seller_name);
   return await axios.delete(`${API_URL}/delete_request?seller_name=${seller_name}`);
 }
+
+export const getSellerEmail = async (seller_name) => {
+  return await axios.get(`${API_URL}/seller_email?seller_name=${seller_name}`);
+}

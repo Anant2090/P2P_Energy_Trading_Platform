@@ -1,5 +1,5 @@
 import React from "react";
-import { createRequest } from "../services/requestService";
+import { createRequest, getSellerEmail } from "../services/requestService";
 
 const DataTable = ({ title, data, actionLabel }) => {
   return (
@@ -43,17 +43,17 @@ const DataTable = ({ title, data, actionLabel }) => {
                     onClick={async () => {
                       try {
                         if (actionLabel === "Buy") {
-                          console.log(
-                            "On clicking user need to go on login page"
-                          );
+                          const response = await getSellerEmail(item.name);
+                          console.log(response.data);
                         } else {
-                          await createRequest({
+                          const response = await createRequest({
                             buyerName: item.name,
                             sellerEmail: localStorage.getItem("userEmail"),
                             energy: item.energy,
                             price: item.price,
                             distance: item.distance,
                           });
+                          console.log(response.data);
                         }
                       } catch (error) {
                         alert(error.response.data.msg);
