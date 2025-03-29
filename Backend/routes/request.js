@@ -13,17 +13,19 @@ router.post("/create", async (req, res) => {
     }
 
     const Seller_data = await User.findOne({ email: sellerEmail });
+    if (Seller_data.SellRequests === false) {
+      return res.status(400).json({ msg: "Sell Request already exists" });
+    }
     const Trader_data = await Trade.findOne({ name: buyerName });
     await Trade.deleteOne({ name: buyerName });
     const Buyer_data = await User.findOne({ email: Trader_data.email });
+
 
     if (!Seller_data || !Trader_data || !Buyer_data) {
       return res.status(404).json({ msg: "Invalid trade data" });
     }
 
-    if (Seller_data.SellRequests === false) {
-      return res.status(400).json({ msg: "Sell Request already exists" });
-    }
+    
 
     const buyerEmail = Buyer_data.email;
     const sellerName = `${Seller_data.firstName} ${Seller_data.lastName}`;
@@ -44,6 +46,8 @@ router.post("/create", async (req, res) => {
 
     res.status(201).json({
       message: "Request created successfully",
+      sellerEmail: sellerEmail,
+      buyerEmail: buyerEmail,
     });
   } catch (error) {
     if (!res.headersSent) {
@@ -106,6 +110,25 @@ router.delete("/delete/", async (req, res) => {
   }
 });
 
+router.delete("/delete_trade/", async (req, res) => {
+  try{
+    const {Seller_Email, Buyer_Email} = req.query;
+    console.log(Seller_Email,Buyer_Email)
+    const a=await Trade.deleteMany({ email: Seller_Email });
+    const b=await Trade.deleteMany({ email: Buyer_Email });
+    await User.updateMany({ email: Seller_Email }, { $set: { existingBuyTrade: true ,existingSellTrade: true } });
+    await User.updateMany({ email: Buyer_Email }, { $set: { existingBuyTrade: true ,existingSellTrade: true  } });
+    console.log(a,b)
+    return res.status(201).json({
+      message: "Trade deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+
+
 // Delete particular request for particular request with user seller_name
 router.delete("/delete_request/", async (req, res) => {
   try {
@@ -122,5 +145,15 @@ router.delete("/delete_request/", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+
+router.get("/seller_email", async (req, res) => {
+  try {
+    const { seller_name } = req.query;
+    const seller_trade = await Trade.findOne({ name: seller_name });
+    return res.json(seller_trade.email);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
 
 module.exports = router;

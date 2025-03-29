@@ -8,6 +8,34 @@ const BuySell = () => {
   const [profile, setProfile] = useState(null);
   const { price, updatePrice } = usePriceStore();
 
+
+  const [transactionType, setTransactionType] = useState(
+    localStorage.getItem("transactionType") || "buy"
+  );
+  const [formData, setFormData] = useState({
+    // name: "",
+    energy: "",
+    price: "",
+    distance: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [buyRequests, setBuyRequests] = useState([]);
+  const [sellRequests, setSellRequests] = useState([]);
+
+
+
+  const fetchTrades = async () => {
+    try {
+      const response = await getTrades();
+      const trades = response.data;
+      setBuyRequests(trades.filter((trade) => trade.tradeType === "buy"));
+      setSellRequests(trades.filter((trade) => trade.tradeType === "sell"));
+    } catch (error) {
+      console.error("Error fetching trades:", error);
+    }
+  };
+
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -23,35 +51,9 @@ const BuySell = () => {
     };
 
     fetchProfile();
-  }, [Email]);
-
-  const [transactionType, setTransactionType] = useState(
-    localStorage.getItem("transactionType") || "buy"
-  );
-  const [formData, setFormData] = useState({
-    // name: "",
-    energy: "",
-    price: "",
-    distance: "",
-  });
-  const [errors, setErrors] = useState({});
-  const [buyRequests, setBuyRequests] = useState([]);
-  const [sellRequests, setSellRequests] = useState([]);
-
-  useEffect(() => {
     fetchTrades();
-  }, []);
 
-  const fetchTrades = async () => {
-    try {
-      const response = await getTrades();
-      const trades = response.data;
-      setBuyRequests(trades.filter((trade) => trade.tradeType === "buy"));
-      setSellRequests(trades.filter((trade) => trade.tradeType === "sell"));
-    } catch (error) {
-      console.error("Error fetching trades:", error);
-    }
-  };
+  }, [Email,buyRequests,sellRequests]);
 
   const handleTransactionToggle = (type) => {
     setTransactionType(type);

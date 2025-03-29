@@ -7,7 +7,7 @@ import DataTable from "./Components/HistoryTable";
 import { useNavigate } from "react-router-dom";
 import { getUserRequest } from "../services/requestService";
 import { useState } from "react";
-
+import MyRequestTrade from "./Components/MyRequestTrade";
 const Home = () => {
   const navigate = useNavigate();
   const [userRequest, setUserRequests] = useState([]);
@@ -82,6 +82,7 @@ const Home = () => {
               <p>No requests available.</p>
             )}
           </div>
+          <MyRequestTrade />
           <div className="request-history-container bg-[#faf9fac2] ">
             <DataTable title={"History Table"} data={History} />
           </div>

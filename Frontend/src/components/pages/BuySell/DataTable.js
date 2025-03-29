@@ -1,7 +1,32 @@
 import React from "react";
 import { createRequest, getSellerEmail } from "../services/requestService";
-
+import { getProfile } from "../services/profileService";
+import { storeTransaction, verifyAndSettle } from "../../Blockchain/blockchain";
+import { deleteTrades } from "../services/requestService";
 const DataTable = ({ title, data, actionLabel }) => {
+  const [currentUser, setCurrentUser] = React.useState(null);
+  const [currentSellerEmail, setCurrentSellerEmail] = React.useState("");
+
+  const fetchProfile = async (Email) => {
+    try {
+      const res = await getProfile(Email);
+      if (res) {
+        setCurrentUser(res.data);
+        return res.data;
+      } else {
+        console.warn("Profile data is empty or undefined.");
+        setCurrentUser({}); // Fallback to empty object
+      }
+    } catch (error) {
+      console.error(
+        error?.response?.data?.msg ??
+          error.message ??
+          "Failed to fetch profile."
+      );
+    }
+  };
+
+  
   return (
     <div className="mt-5 animate-fadeIn">
       <h2 className="text-2xl text-center mb-4 text-gray-800">{title}</h2>
@@ -43,8 +68,40 @@ const DataTable = ({ title, data, actionLabel }) => {
                     onClick={async () => {
                       try {
                         if (actionLabel === "Buy") {
-                          const response = await getSellerEmail(item.name);
-                          console.log(response.data);
+                          //   const response = await getSellerEmail(item.name);
+                          //   console.log(response.data.sellerEmail);
+                          //   (function() {
+                          //     setCurrentSellerEmail(response.data.sellerEmail);
+                          // })();
+                          //   const currSeller= await fetchProfile(response.data.sellerEmail);
+                          console.log(item.email);
+                          console.log(item.energy);
+                          console.log(item.price);
+
+                          const PriceInEther = item.energy * item.price;
+                          const actualEtherPrice = (
+                            PriceInEther / 1e18
+                          ).toFixed(18); // Convert to string with 18 decimals
+
+                          console.log("Price in Ether:", actualEtherPrice);
+
+                          const transaction = await storeTransaction(
+                            item.email,
+                            localStorage.getItem("userEmail"),
+                            item.energy,
+                            actualEtherPrice,
+                            0 // Pass as a string
+                          );
+
+                          console.log("Transaction:", transaction);
+
+                          if(transaction){
+                            deleteTrades(item.email, localStorage.getItem("userEmail"));
+
+                          }
+
+                          
+
                         } else {
                           const response = await createRequest({
                             buyerName: item.name,
@@ -54,6 +111,7 @@ const DataTable = ({ title, data, actionLabel }) => {
                             distance: item.distance,
                           });
                           console.log(response.data);
+
                         }
                       } catch (error) {
                         alert(error.response.data.msg);
