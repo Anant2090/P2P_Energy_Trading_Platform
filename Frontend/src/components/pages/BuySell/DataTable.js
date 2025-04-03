@@ -68,12 +68,12 @@ const DataTable = ({ title, data, actionLabel }) => {
                     onClick={async () => {
                       try {
                         if (actionLabel === "Buy") {
-                          //   const response = await getSellerEmail(item.name);
-                          //   console.log(response.data.sellerEmail);
-                          //   (function() {
-                          //     setCurrentSellerEmail(response.data.sellerEmail);
-                          // })();
-                          //   const currSeller= await fetchProfile(response.data.sellerEmail);
+                            const response = await getSellerEmail(item.name);
+                            console.log(response.data.sellerEmail);
+                            (function() {
+                              setCurrentSellerEmail(response.data.sellerEmail);
+                          })();
+                            const currSeller= await fetchProfile(response.data.sellerEmail);
                           console.log(item.email);
                           console.log(item.energy);
                           console.log(item.price);
@@ -81,7 +81,7 @@ const DataTable = ({ title, data, actionLabel }) => {
                           const PriceInEther = item.energy * item.price;
                           const actualEtherPrice = (
                             PriceInEther / 1e18
-                          ).toFixed(18); // Convert to string with 18 decimals
+                          ).toFixed(18);
 
                           console.log("Price in Ether:", actualEtherPrice);
 
@@ -90,18 +90,14 @@ const DataTable = ({ title, data, actionLabel }) => {
                             localStorage.getItem("userEmail"),
                             item.energy,
                             actualEtherPrice,
-                            0 // Pass as a string
+                            0
                           );
 
                           console.log("Transaction:", transaction);
 
                           if(transaction){
                             deleteTrades(item.email, localStorage.getItem("userEmail"));
-
                           }
-
-                          
-
                         } else {
                           const response = await createRequest({
                             buyerName: item.name,
@@ -110,8 +106,7 @@ const DataTable = ({ title, data, actionLabel }) => {
                             price: item.price,
                             distance: item.distance,
                           });
-                          console.log(response.data);
-
+                          alert(response.data.message);
                         }
                       } catch (error) {
                         alert(error.response.data.msg);

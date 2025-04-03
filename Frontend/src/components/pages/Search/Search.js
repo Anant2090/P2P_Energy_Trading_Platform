@@ -4,6 +4,8 @@ import SearchTable from "./Components/SearchTable";
 import { getTrades } from "../services/tradeService";
 
 const Search = () => {
+
+  const Email = localStorage.getItem("userEmail");
   const [searchTerm, setSearchTerm] = useState("");
   const [distanceFilter, setDistanceFilter] = useState("");
   const [tradeRequests, setTradeRequests] = useState([]);
@@ -35,6 +37,8 @@ const Search = () => {
         parseFloat(trade.distance) <= parseFloat(distanceFilter)
       );
     }
+
+    filteredData = filteredData.filter((trade) => trade.email !== Email);
 
     return filteredData;
   };

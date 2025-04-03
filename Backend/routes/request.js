@@ -4,6 +4,8 @@ const Trade = require("../models/Trade");
 const User = require("../models/User");
 const router = express.Router();
 
+
+// Create request on Buy-Sell and search Page
 router.post("/create", async (req, res) => {
   try {
     const { buyerName, sellerEmail, energy, price, distance } = req.body;
@@ -12,20 +14,15 @@ router.post("/create", async (req, res) => {
       return res.status(400).json({ msg: "All fields are required" });
     }
 
+    const Existing_Request = await Request.findOne({ sellerEmail: sellerEmail });
+
+    if (Existing_Request) {
+      return res.status(400).json({ msg: "You have an selling request" });
+    }
+
     const Seller_data = await User.findOne({ email: sellerEmail });
-    if (Seller_data.SellRequests === false) {
-      return res.status(400).json({ msg: "Sell Request already exists" });
-    }
-    const Trader_data = await Trade.findOne({ name: buyerName });
-    await Trade.deleteOne({ name: buyerName });
-    const Buyer_data = await User.findOne({ email: Trader_data.email });
-
-
-    if (!Seller_data || !Trader_data || !Buyer_data) {
-      return res.status(404).json({ msg: "Invalid trade data" });
-    }
-
-    
+    const Buyer_trade = await Trade.findOne({ name: buyerName });
+    const Buyer_data = await User.findOne({ email: Buyer_trade.email });
 
     const buyerEmail = Buyer_data.email;
     const sellerName = `${Seller_data.firstName} ${Seller_data.lastName}`;
@@ -39,10 +36,7 @@ router.post("/create", async (req, res) => {
       price,
       distance,
     });
-
-    Seller_data.SellRequests = false;
     await newRequest.save();
-    await Seller_data.save();
 
     res.status(201).json({
       message: "Request created successfully",
@@ -56,7 +50,7 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// Fetch request for particular user
+// Fetch request for particular user (Home Page)
 router.get("/list/", async (req, res) => {
   try {
     const { email } = req.query;
@@ -66,6 +60,42 @@ router.get("/list/", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+
+// Fetch request for particular user (Home Page)
+router.get("/list_buyer/", async (req, res) => {
+  try {
+    const { email } = req.query;
+    const requests = await Request.find({ sellerEmail: email });
+    return res.json(requests);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete particular request for particular request with user seller_name (Home Page)
+router.delete("/delete_request/", async (req, res) => {
+  try {
+    const { seller_name } = req.query;
+    const requests = await Request.deleteOne({ sellerName: seller_name });
+    return res.status(201).json({
+      message: "Request cancelled successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete request by self by clicking cancel button (Home Page)
+router.delete("/delete_req/",async (req, res) => {
+  try{
+    const { seller_email } = req.query;
+    const request = await Request.deleteOne( { sellerEmail: seller_email });
+    return res.status(201).json({ message: "Request cancelled successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+})
+
 
 // Delete all request after accept clicked
 router.delete("/delete/", async (req, res) => {
@@ -127,24 +157,6 @@ router.delete("/delete_trade/", async (req, res) => {
   }
 })
 
-
-
-// Delete particular request for particular request with user seller_name
-router.delete("/delete_request/", async (req, res) => {
-  try {
-    const { seller_name } = req.query;
-    const seller_request = await Request.findOne({ sellerName: seller_name });
-    const requests = await Request.deleteOne({ sellerName: seller_name });
-    const user = await User.findOne({ email: seller_request.sellerEmail });
-    user.SellRequests = true;
-    user.save();
-    return res.status(201).json({
-      message: "Request cancelled successfully",
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
 
 router.get("/seller_email", async (req, res) => {
   try {

@@ -28,8 +28,8 @@ const BuySell = () => {
     try {
       const response = await getTrades();
       const trades = response.data;
-      setBuyRequests(trades.filter((trade) => trade.tradeType === "buy"));
-      setSellRequests(trades.filter((trade) => trade.tradeType === "sell"));
+      setBuyRequests(trades.filter((trade) => trade.tradeType === "buy" && trade.email !== Email));
+      setSellRequests(trades.filter((trade) => trade.tradeType === "sell" && trade.email !== Email));
     } catch (error) {
       console.error("Error fetching trades:", error);
     }

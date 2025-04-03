@@ -23,16 +23,13 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchRequests();
-  }, []);
-
-  useEffect(() => {
     const flag = localStorage.getItem("isNewUser") === "true";
     if (flag) {
       alert("Fill all the data first!");
       navigate("/Profile", { replace: true });
     }
-  }, []);
+    fetchRequests();
+  }, [userRequest]);
 
   const History = [
     { id: 1, name: "Anant", trade: "Sell" },
@@ -66,22 +63,21 @@ const Home = () => {
         </div>
       </div>
       <div>
-        <div className="new-request-container bg-[#faf9fac2] ">
-          <h2>New Request</h2>
-          <div className="new-requests">
-            {userRequest && userRequest.length > 0 ? (
-              userRequest.map((request) => (
+        <div className="new-request-container h-auto bg-[#faf9fac2] ">
+          {userRequest &&
+            userRequest.length > 0 &&
+            userRequest.map((request) => (
+              <div className="new-requests">
+                <h2>New Request</h2>
                 <NewRequest
                   key={request.sellEmail}
                   sellerName={request.sellerName}
                   price={request.price}
                   energy={request.energy}
                 />
-              ))
-            ) : (
-              <p>No requests available.</p>
-            )}
-          </div>
+              </div>
+            ))}
+
           <MyRequestTrade />
           <div className="request-history-container bg-[#faf9fac2] ">
             <DataTable title={"History Table"} data={History} />

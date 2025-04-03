@@ -10,6 +10,10 @@ export const getUserRequest = async (email) => {
     return await axios.get(`${API_URL}/list?email=${email}`);
 }
 
+export const getUserBuyerRequest = async (email) => {
+  return await axios.get(`${API_URL}/list_buyer?email=${email}`);
+}
+
 export const deleteRequest = async (email, seller_name) => {
     return await axios.delete(`${API_URL}/delete?email=${email}&seller_name=${seller_name}`);
 }
@@ -17,6 +21,11 @@ export const deleteRequest = async (email, seller_name) => {
 export const deleteSellerRequest = async (seller_name) => {
   console.log(seller_name);
   return await axios.delete(`${API_URL}/delete_request?seller_name=${seller_name}`);
+}
+
+// Delete request by self by clicking cancel button (Home Page)
+export const deleteSellRequest = async (email) => {
+  return await axios.delete(`${API_URL}/delete_req?seller_email=${email}`)
 }
 
 export const getSellerEmail = async (seller_name) => {
