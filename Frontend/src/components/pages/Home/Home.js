@@ -64,11 +64,10 @@ const Home = () => {
       </div>
       <div>
         <div className="new-request-container h-auto bg-[#faf9fac2] ">
-          {userRequest &&
-            userRequest.length > 0 &&
+          <h2>New Request</h2>
+          {userRequest && userRequest.length > 0 ? (
             userRequest.map((request) => (
-              <div className="new-requests">
-                <h2>New Request</h2>
+              <div className="new-requests w-[100%] p-2 m-2">
                 <NewRequest
                   key={request.sellEmail}
                   sellerName={request.sellerName}
@@ -76,8 +75,10 @@ const Home = () => {
                   energy={request.energy}
                 />
               </div>
-            ))}
-
+            ))
+          ) : (
+            <h1 className="text-center text-2xl my-3">No Incoming Requests</h1>
+          )}
           <MyRequestTrade />
           <div className="request-history-container bg-[#faf9fac2] ">
             <DataTable title={"History Table"} data={History} />
