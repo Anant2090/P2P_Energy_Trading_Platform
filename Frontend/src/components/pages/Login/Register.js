@@ -4,7 +4,7 @@ import { register } from "../services/authService";
 import { motion } from "framer-motion";
 
 function Register() {
-  const [name, setName] = useState("");
+  const [ESP32_IP, setESP32_IP] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await register({ name, email, password });
+      await register({ ESP32_IP, email, password });
       alert("Registration successful! Please login.");
       navigate("/login");
     } catch (error) {
@@ -62,12 +62,12 @@ function Register() {
           <p className="text-center text-gray-600 mt-4">Create a new account</p>
           <form onSubmit={handleRegister} className="mt-6">
             <div className="mb-4">
-              <label className="block text-gray-700">Full Name</label>
+              <label className="block text-gray-700">ESP32 IP</label>
               <input
                 type="text"
                 className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 transition-all duration-300"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={ESP32_IP}
+                onChange={(e) => setESP32_IP(e.target.value)}
                 required
               />
             </div>

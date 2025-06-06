@@ -8,19 +8,20 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const BatteryPercentage = () => {
   const [batteryPercentage, setBatteryPercentage] = useState(0);
+  const espid = localStorage.getItem('ESPID');
 
   useEffect(() => {
     const fetchBatteryPercentage = async () => {
       try {
-        const response = await fetch(
-          'https://api.thingspeak.com/channels/2736502/fields/1.json?api_key=F3680PI3K5CQPRB0&results=1'
-        );
-        const json = await response.json();
-
-        // Extract latest battery percentage
-        const latestBattery = parseInt(json.feeds[0].field1, 10);
-        setBatteryPercentage(latestBattery);
-      // console.log("response:", response);
+        fetch("http://192.168.18.184/battery")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch battery data");
+        return res.json();
+      })
+      .then((data) => {
+        setBatteryPercentage(data.percentage); // access directly here
+      })
+      .catch((err) => console.log(err.message));
 
       } catch (error) {
         console.error('Error fetching battery percentage:', error);

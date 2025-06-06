@@ -16,7 +16,7 @@ const NewRequest = ({ sellerName, price, energy }) => {
             <IoPersonAdd className="text-green-700" />
           </div>
           <h1 className="text-left text-2xl font-bold text-[#333] ">
-            Your Requests
+            Incoming Requests from {sellerName}
           </h1>
         </div>
         <div className="flex flex-row gap-2.5 w-[100%] pl-5 items-center">

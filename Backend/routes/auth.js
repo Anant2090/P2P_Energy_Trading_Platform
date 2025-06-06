@@ -9,18 +9,20 @@ const SECRET_KEY = "your_jwt_secret"; // Change this in production
 // Register
 router.post("/register", async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { ESP32_IP, email, password } = req.body;
         const existingUser = await User.findOne({ email });
 
         if (existingUser) return res.status(400).json({ msg: "User already exists" });
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
+        
 
-        const newUser = new User({ name, email, password: hashedPassword });
+        const newUser = new User({ espid: ESP32_IP, email, password: hashedPassword });
         await newUser.save();
 
         res.status(201).json({ msg: "User registered successfully" });
+
     } catch (error) {
         res.status(500).json({ msg: "Server error" });
     }
@@ -38,7 +40,7 @@ router.post("/login", async (req, res) => {
         if (!isMatch) return res.status(400).json({ msg: "Invalid password" });
 
         const token = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: "1h" });
-        res.json({ token, userId: user._id, isNewUser: user.isNewUser, username: user.name });
+        res.json({ token, userId: user._id, isNewUser: user.isNewUser, username: user.name, espid: user.espid });
     } catch (error) {
         res.status(500).json({ msg: "Server error" });
     }

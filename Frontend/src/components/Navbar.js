@@ -11,8 +11,6 @@ const Navbar = () => {
     return () => clearInterval(interval);
   }, [updatePrice]);
 
-  console.log(price);
-
   const navigate = useNavigate();
   const isLoggedIn = localStorage.getItem("token");
 

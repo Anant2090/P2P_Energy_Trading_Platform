@@ -12,10 +12,12 @@ function Login() {
       e.preventDefault();
       try {
         const res = await login({ email, password });
+        console.log(res.data);
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("userEmail", email);
         localStorage.setItem("isNewUser", res.data.isNewUser);
         localStorage.setItem("username", res.data.username);
+        localStorage.setItem("ESPID", res.data.espid);
         if (res.data.isNewUser) {
           navigate("/Profile");
         } else {

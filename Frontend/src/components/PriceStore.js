@@ -7,7 +7,7 @@ export const usePriceStore = create((set) => ({
   price: 6.47,
   updatePrice: async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/trade/trades");
+      const response = await axios.get("http://localhost:8000/api/trade/list");
       let TotalSupply = 0;
       let TotalDemand = 0;
 
