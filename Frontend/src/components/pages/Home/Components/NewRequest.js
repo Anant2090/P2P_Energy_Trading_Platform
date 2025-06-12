@@ -6,8 +6,20 @@ import {
 import { MdEnergySavingsLeaf } from "react-icons/md";
 import { FiDollarSign } from "react-icons/fi";
 import { IoPersonAdd } from "react-icons/io5";
+import { storeTransaction } from "../../../Blockchain/blockchain";
+import { getProfile } from "../../services/profileService";
+
+import {
+  createRequest,
+  getSellerEmail,
+  deleteTrades,
+} from "../../services/requestService";
 
 const NewRequest = ({ sellerName, price, energy }) => {
+  const [currentUser, setCurrentUser] = React.useState(null);
+  const [currentSellerEmail, setCurrentSellerEmail] = React.useState("");
+  const espid = localStorage.getItem("ESPID");
+
   return (
     <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-300">
       <div className="flex flex-col">
@@ -32,11 +44,73 @@ const NewRequest = ({ sellerName, price, energy }) => {
         <button
           onClick={async () => {
             try {
-              await deleteRequest(
+              const seller = await getProfile(sellerName);
+              const buyer = localStorage.getItem("userEmail");
+              console.log("seller", seller.data.email);
+
+              const selllerEspId = seller.data.espid;
+              const buyerEspId = localStorage.getItem("ESPID");
+
+              const priceInEther = energy * price;
+              const actualEtherPrice = (priceInEther / 1e18).toFixed(18);
+
+              console.log("sellerEspId", selllerEspId);
+              console.log("buyerEspId", buyerEspId);
+
+              console.log("buyer", buyer);
+              console.log("Accepting request for seller:", sellerName);
+              const transaction = await storeTransaction(
+                buyer,
                 localStorage.getItem("userEmail"),
-                sellerName
+                energy,
+                actualEtherPrice,
+                0
               );
+
+              if (transaction) {
+                await deleteTrades(buyer, localStorage.getItem("userEmail"));
+              }
+              await deleteSellerRequest(sellerName);
+
+
+
               alert("Request accepted!");
+
+              try {
+                const [resReceiver, resSender] = await Promise.all([
+                  fetch(`http://${selllerEspId}/on`),
+                  fetch(`http://${buyerEspId}/on`),
+                ]);
+
+                if (!resReceiver.ok || !resSender.ok) {
+                  throw new Error("One or both ESP devices failed to respond.");
+                }
+
+                console.log("✅ Both ESPs triggered successfully.");
+              } catch (espError) {
+                console.error("❌ ESP Error:", espError.message);
+              }
+
+              setTimeout(async () => {
+                // Trigger ESP devices
+                try {
+                  const [resReceiver, resSender] = await Promise.all([
+                    fetch(`http://${selllerEspId}/off`),
+                    fetch(`http://${buyerEspId}/off`),
+                  ]);
+
+                  if (!resReceiver.ok || !resSender.ok) {
+                    throw new Error(
+                      "One or both ESP devices failed to respond."
+                    );
+                  }
+
+                  console.log("✅ Both ESPs triggered successfully.");
+                } catch (espError) {
+                  console.error("❌ ESP Error:", espError.message);
+                }
+              }, 15000);
+
             } catch (error) {
               alert(error.response?.data?.msg || "Error accepting request.");
             }

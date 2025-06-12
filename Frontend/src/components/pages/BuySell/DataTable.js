@@ -1,21 +1,23 @@
 import React from "react";
 import { createRequest, getSellerEmail } from "../services/requestService";
 import { getProfile } from "../services/profileService";
-import { storeTransaction, verifyAndSettle } from "../../Blockchain/blockchain";
+import { storeTransaction } from "../../Blockchain/blockchain";
 import { deleteTrades } from "../services/requestService";
+
 const DataTable = ({ title, data, actionLabel }) => {
   const [currentUser, setCurrentUser] = React.useState(null);
   const [currentSellerEmail, setCurrentSellerEmail] = React.useState("");
+  const espid = localStorage.getItem("ESPID");
 
-  const fetchProfile = async (Email) => {
+  const fetchProfile = async (email) => {
     try {
-      const res = await getProfile(Email);
+      const res = await getProfile(email);
       if (res) {
         setCurrentUser(res.data);
         return res.data;
       } else {
         console.warn("Profile data is empty or undefined.");
-        setCurrentUser({}); // Fallback to empty object
+        setCurrentUser({});
       }
     } catch (error) {
       console.error(
@@ -26,7 +28,6 @@ const DataTable = ({ title, data, actionLabel }) => {
     }
   };
 
-  
   return (
     <div className="mt-5 animate-fadeIn">
       <h2 className="text-2xl text-center mb-4 text-gray-800">{title}</h2>
@@ -68,22 +69,28 @@ const DataTable = ({ title, data, actionLabel }) => {
                     onClick={async () => {
                       try {
                         if (actionLabel === "Buy") {
-                            const response = await getSellerEmail(item.name);
-                            console.log(response.data.sellerEmail);
-                            (function() {
-                              setCurrentSellerEmail(response.data.sellerEmail);
-                          })();
-                            const currSeller= await fetchProfile(response.data.sellerEmail);
-                          console.log(item.email);
-                          console.log(item.energy);
-                          console.log(item.price);
+                          // Get sender's ESP ID
+                         const senderProfile = await getProfile(item.email);  
+                          const senderEspId = senderProfile?.data?.espid;
+                          const receiverEspId = espid;
 
-                          const PriceInEther = item.energy * item.price;
+                          console.log("Sender ESP:", senderEspId);
+                          console.log("Receiver ESP:", receiverEspId);
+
+                          // Get seller email
+                          const emailRes = await getSellerEmail(item.name);
+                          const sellerEmail = emailRes.data.sellerEmail;
+                          setCurrentSellerEmail(sellerEmail);
+
+                          await fetchProfile(sellerEmail);
+
+                          const priceInEther = item.energy * item.price;
                           const actualEtherPrice = (
-                            PriceInEther / 1e18
+                            priceInEther / 1e18
                           ).toFixed(18);
 
-                          console.log("Price in Ether:", actualEtherPrice);
+                          console.log(espid, senderEspId);
+
 
                           const transaction = await storeTransaction(
                             item.email,
@@ -93,11 +100,55 @@ const DataTable = ({ title, data, actionLabel }) => {
                             0
                           );
 
-                          console.log("Transaction:", transaction);
-
-                          if(transaction){
-                            deleteTrades(item.email, localStorage.getItem("userEmail"));
+                          if (transaction) {
+                            await deleteTrades(
+                              item.email,
+                              localStorage.getItem("userEmail")
+                            );
                           }
+
+
+                          try {
+                            const [resReceiver, resSender] = await Promise.all([
+                              fetch(`http://${espid}/on`),
+                              fetch(`http://${senderEspId}/on`),
+                            ]);
+
+                            if (!resReceiver.ok || !resSender.ok) {
+                              throw new Error(
+                                "One or both ESP devices failed to respond."
+                              );
+                            }
+
+                            console.log("✅ Both ESPs triggered successfully.");
+                          } catch (espError) {
+                            console.error("❌ ESP Error:", espError.message);
+                           
+                          }
+
+                          setTimeout(async () => {
+                            // Trigger ESP devices
+                          try {
+                            const [resReceiver, resSender] = await Promise.all([
+                              fetch(`http://${espid}/off`),
+                              fetch(`http://${senderEspId}/off`),
+                            ]);
+
+                            if (!resReceiver.ok || !resSender.ok) {
+                              throw new Error(
+                                "One or both ESP devices failed to respond."
+                              );
+                            }
+
+                            console.log("✅ Both ESPs triggered successfully.");
+                          } catch (espError) {
+                            console.error("❌ ESP Error:", espError.message);
+                            
+                          }
+
+
+                            
+                          }, 15000);
                         } else {
                           const response = await createRequest({
                             buyerName: item.name,
@@ -109,7 +160,11 @@ const DataTable = ({ title, data, actionLabel }) => {
                           alert(response.data.message);
                         }
                       } catch (error) {
-                        alert(error.response.data.msg);
+                        console.error("Error:", error);
+                        alert(
+                          error?.response?.data?.msg ||
+                            "An unexpected error occurred."
+                        );
                       }
                     }}
                   >

@@ -26,14 +26,37 @@ router.post("/profileupdate", async (req, res) => {
 
 router.get("/getprofile", async (req, res) => {
   try {
-    const { email } = req.query; 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: "User not found" });
+    const { email } = req.query;
+    
+
+    if (!email) return res.status(400).json({ msg: "Please provide email or name" });
+
+    // Try finding by email first
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const parts = email.trim().split(" ");
+
+      // Handle both single and full name inputs
+      if (parts.length === 2) {
+        const [firstName, lastName] = parts;
+        user = await User.findOne({ firstName, lastName });
+      } else {
+        user = await User.findOne({
+          $or: [{ firstName: parts[0] }, { lastName: parts[0] }]
+        });
+      }
+    }
+
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
     res.json(user);
   } catch (error) {
     res.status(500).json({ msg: "Server error" });
   }
 });
+
+
 
 
 module.exports = router;
